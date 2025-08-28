@@ -1,0 +1,88 @@
+# Alacritty configuration
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+padding = { x = 10, y = 10 }
+decorations = "Full"
+opacity = 0.85
+blur = true
+dynamic_title = true
+option_as_alt = "Both"  # For macOS
+
+[font]
+size = 14.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "Bold Italic"
+
+[colors]
+# TokyoNight Night theme
+[colors.primary]
+background = '#1a1b26'
+foreground = '#c0caf5'
+
+[colors.normal]
+black   = '#15161e'
+red     = '#f7768e'
+green   = '#9ece6a'
+yellow  = '#e0af68'
+blue    = '#7aa2f7'
+magenta = '#bb9af7'
+cyan    = '#7dcfff'
+white   = '#a9b1d6'
+
+[colors.bright]
+black   = '#414868'
+red     = '#f7768e'
+green   = '#9ece6a'
+yellow  = '#e0af68'
+blue    = '#7aa2f7'
+magenta = '#bb9af7'
+cyan    = '#7dcfff'
+white   = '#c0caf5'
+
+[colors.selection]
+background = '#33467c'
+text = '#c0caf5'
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+vi_mode_style = { shape = "Block", blinking = "Off" }
+
+[bell]
+animation = "EaseOutExpo"
+duration = 100
+color = '#ffffff'
+
+[selection]
+save_to_clipboard = true
+
+[keyboard]
+bindings = [
+  # macOS specific bindings
+  { key = "K", mods = "Command", action = "ClearHistory" },
+  { key = "V", mods = "Command", action = "Paste" },
+  { key = "C", mods = "Command", action = "Copy" },
+  { key = "Q", mods = "Command", action = "Quit" },
+  { key = "W", mods = "Command", action = "Quit" },
+  { key = "N", mods = "Command", action = "CreateNewWindow" },
+  { key = "Return", mods = "Command", action = "ToggleFullscreen" },
+  { key = "Plus", mods = "Command", action = "IncreaseFontSize" },
+  { key = "Minus", mods = "Command", action = "DecreaseFontSize" },
+  { key = "Key0", mods = "Command", action = "ResetFontSize" },
+]
