@@ -1,0 +1,8 @@
+export INSTALL_TERMINAL="both"
+export INSTALL_FONTS="yes"
+export INSTALL_NODEJS="yes"
+export INSTALL_PYTHON="yes"
+export INSTALL_RUST="no"
+export CHANGE_SHELL="yes"
+export OS="macos"
+export DISTRO="macos"
