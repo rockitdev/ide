@@ -345,10 +345,10 @@ export DISTRO="$DISTRO"
 EOF
     
     # Run the main setup script
-    if [ -f "$DOTFILES_DIR/scripts/setup.sh" ]; then
-        bash "$DOTFILES_DIR/scripts/setup.sh"
+    if [ -f "$DOTFILES_DIR/dotfiles/scripts/setup.sh" ]; then
+        bash "$DOTFILES_DIR/dotfiles/scripts/setup.sh"
     else
-        print_error "Setup script not found at $DOTFILES_DIR/scripts/setup.sh"
+        print_error "Setup script not found at $DOTFILES_DIR/dotfiles/scripts/setup.sh"
         exit 1
     fi
     
