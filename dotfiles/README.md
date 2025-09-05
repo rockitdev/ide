@@ -256,6 +256,69 @@ The setup includes session management via `auto-session`:
 :SessionRestore   " Restore session
 ```
 
+### SSH Host Management
+
+The dotfiles include a powerful SSH management system that keeps your organization's hosts private while providing fuzzy search and environment safety features.
+
+#### Initial Setup
+
+```bash
+# Setup creates ~/.zshrc.ssh.local (gitignored)
+ssh-setup
+```
+
+#### Configure Your Hosts
+
+Edit `~/.zshrc.ssh.local` to add your SSH hosts:
+
+```bash
+# Add your hosts to the array
+declare -a SSH_HOSTS_LOCAL=(
+    "dev01:mydev01.company.com:development:Development Server 01"
+    "dev02:mydev02.company.com:development:Development Server 02"
+    "staging01:mystaging01.company.com:staging:Staging Server 01"
+    "prod01:myprod01.company.com:production:Production Server 01"
+)
+
+# Create SSH aliases with jump hosts
+alias ssh-dev01='ssh -J jumphost user@mydev01.company.com'
+alias ssh-staging01='ssh -J jumphost user@mystaging01.company.com'
+
+# Production hosts with safety prompts
+ssh-prod01() {
+    echo "🔴 ⚠️  PRODUCTION ENVIRONMENT ⚠️"
+    read -q "REPLY?Connect to production? (y/N) "
+    echo
+    [[ $REPLY =~ ^[Yy]$ ]] && ssh -J jumphost user@myprod01.company.com
+}
+```
+
+#### Usage
+
+```bash
+# Fuzzy search all configured hosts
+sshf
+
+# Direct connection with environment detection
+sshe dev01
+
+# List all configured hosts
+ssh-list-hosts
+```
+
+#### Features
+
+- **🔒 Private**: Host configurations never committed to repo
+- **🎨 Visual Safety**: Automatic iTerm2 profile switching
+  - 🟢 Green for development environments
+  - 🟡 Yellow for staging environments  
+  - 🔴 Red for production environments
+- **⚡ Fast**: Fuzzy search through all hosts with FZF
+- **🛡️ Safe**: Production confirmation prompts
+- **📱 Portable**: Works across all your machines
+
+The local configuration file (`~/.zshrc.ssh.local`) is automatically created and gitignored, keeping your organization's infrastructure private while maintaining all the productivity benefits.
+
 ## 🐛 Troubleshooting
 
 ### Neovim plugins not installing

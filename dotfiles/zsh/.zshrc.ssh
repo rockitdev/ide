@@ -60,6 +60,196 @@ alias ssh-remove-all='ssh-add -D'
 # SSH agent status
 alias ssh-status='ssh-add -l && echo "Agent PID: $SSH_AGENT_PID"'
 
+# ============================================================================
+# LOCAL SSH HOST CONFIGURATION
+# ============================================================================
+
+# Load local SSH host definitions (not committed to repo)
+[[ -f ~/.zshrc.ssh.local ]] && source ~/.zshrc.ssh.local
+
+# Function to create local SSH config template if it doesn't exist
+create_ssh_local_template() {
+    local ssh_local="$HOME/.zshrc.ssh.local"
+    
+    if [[ ! -f "$ssh_local" ]]; then
+        echo "Creating SSH local configuration template at $ssh_local"
+        cat > "$ssh_local" << 'EOF'
+#!/usr/bin/env zsh
+# Local SSH Configuration - NOT COMMITTED TO REPO
+# Add your organization-specific SSH hosts here
+
+# ============================================================================
+# ENVIRONMENT-SPECIFIC SSH HOSTS  
+# ============================================================================
+
+# Development Environments (example - customize for your hosts)
+# alias ssh-dev01='ssh -J jumphost vsrv@vnydev01.cac1-aws.int.cde.vsrv.io'
+# alias ssh-dev02='ssh -J jumphost vsrv@vnydev02.cac1-aws.int.cde.vsrv.io'
+# alias ssh-dev03='ssh -J jumphost vsrv@vnydev03.cac1-aws.int.cde.vsrv.io'
+
+# Staging Environments
+# alias ssh-staging01='ssh -J jumphost vsrv@vnystaging01.cac1-aws.int.cde.vsrv.io'
+# alias ssh-staging02='ssh -J jumphost vsrv@vnystaging02.cac1-aws.int.cde.vsrv.io'
+
+# Production Environments (with safety checks)
+# ssh-prod01() {
+#     echo "🔴 ⚠️  PRODUCTION ENVIRONMENT ⚠️"
+#     read -q "REPLY?Connect to vnyprod01? (y/N) "
+#     echo
+#     [[ $REPLY =~ ^[Yy]$ ]] && ssh -J jumphost vsrv@vnyprod01.cac1-aws.int.cde.vsrv.io
+# }
+
+# ============================================================================
+# LOCAL SSH HOST REGISTRY
+# ============================================================================
+
+# Array of SSH host definitions for fuzzy finder
+# Format: "alias:hostname:environment:description"
+declare -a SSH_HOSTS_LOCAL=(
+    # "dev01:vnydev01.cac1-aws.int.cde.vsrv.io:development:Development Server 01"
+    # "dev02:vnydev02.cac1-aws.int.cde.vsrv.io:development:Development Server 02"
+    # "staging01:vnystaging01.cac1-aws.int.cde.vsrv.io:staging:Staging Server 01"
+    # "prod01:vnyprod01.cac1-aws.int.cde.vsrv.io:production:Production Server 01"
+)
+
+# ============================================================================
+# ORGANIZATION-SPECIFIC FUNCTIONS
+# ============================================================================
+
+# Add your custom SSH helper functions here
+# Example:
+# my-ssh-dev() {
+#     local num="${1:-01}"
+#     ssh -J jumphost "vsrv@vnydev${num}.cac1-aws.int.cde.vsrv.io"
+# }
+EOF
+        echo "Template created! Edit $ssh_local to add your SSH hosts."
+        echo "This file is gitignored and won't be committed to the repo."
+    fi
+}
+
+# Smart SSH with environment detection and iTerm profile switching
+sshe() {
+    local host="$1"
+    
+    if [[ -z "$host" ]]; then
+        echo "Usage: sshe <hostname>"
+        echo "Available hosts:"
+        # Show available hosts from local config
+        if [[ -n "${SSH_HOSTS_LOCAL[@]}" ]]; then
+            for entry in "${SSH_HOSTS_LOCAL[@]}"; do
+                local alias=$(echo "$entry" | cut -d: -f1)
+                local desc=$(echo "$entry" | cut -d: -f4)
+                printf "  %-15s %s\n" "$alias" "$desc"
+            done
+        fi
+        return 1
+    fi
+    
+    # Detect environment from hostname pattern
+    local env="unknown"
+    case "$host" in
+        *dev*) env="development" ;;
+        *staging*|*stage*) env="staging" ;;
+        *prod*) env="production" ;;
+    esac
+    
+    # Set iTerm profile and show warning
+    case "$env" in
+        development)
+            [[ "$TERM_PROGRAM" == "iTerm.app" ]] && printf "\033]50;SetProfile=Development\a"
+            echo "🟢 Connecting to DEVELOPMENT: $host"
+            ;;
+        staging)
+            [[ "$TERM_PROGRAM" == "iTerm.app" ]] && printf "\033]50;SetProfile=Staging\a"
+            echo "🟡 Connecting to STAGING: $host"
+            ;;
+        production)
+            [[ "$TERM_PROGRAM" == "iTerm.app" ]] && printf "\033]50;SetProfile=Production\a"
+            echo "🔴 ⚠️  PRODUCTION ENVIRONMENT: $host ⚠️"
+            read -q "REPLY?Are you sure you want to connect? (y/N) "
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                echo "Connection cancelled."
+                return 1
+            fi
+            ;;
+    esac
+    
+    # Execute SSH command (assumes host is an alias or function)
+    if command -v "$host" &> /dev/null; then
+        "$host"  # Execute as function
+    elif alias "$host" &> /dev/null; then
+        eval $(alias "$host" | cut -d"'" -f2)  # Execute alias
+    else
+        ssh "$host"  # Fall back to direct SSH
+    fi
+    
+    # Reset iTerm profile
+    [[ "$TERM_PROGRAM" == "iTerm.app" ]] && printf "\033]50;SetProfile=Default\a"
+}
+
+# Fuzzy SSH host selection
+sshf() {
+    # Check if local hosts are defined
+    if [[ -z "${SSH_HOSTS_LOCAL[@]}" ]]; then
+        echo "No SSH hosts configured in ~/.zshrc.ssh.local"
+        echo "Run 'ssh-setup' to create the configuration file."
+        return 1
+    fi
+    
+    # Create selection menu with environment colors
+    local selected=$(printf '%s\n' "${SSH_HOSTS_LOCAL[@]}" | \
+        sed 's/:/\t/g' | \
+        awk -F'\t' '{
+            color = ""; reset = "\033[0m"
+            if ($3 ~ /dev/) color = "\033[32m"      # Green for dev
+            else if ($3 ~ /stag/) color = "\033[33m" # Yellow for staging  
+            else if ($3 ~ /prod/) color = "\033[31m" # Red for prod
+            printf "%s%s%s\t%s\t%s\t%s\n", color, $1, reset, $2, $3, $4
+        }' | \
+        fzf --ansi \
+            --prompt="Select SSH host: " \
+            --preview='echo {4}' \
+            --preview-window=up:3:wrap \
+            --header='Press ENTER to connect, ESC to cancel')
+    
+    if [[ -n "$selected" ]]; then
+        local alias=$(echo "$selected" | awk '{print $1}' | sed 's/\x1b\[[0-9;]*m//g')  # Strip ANSI codes
+        sshe "$alias"
+    fi
+}
+
+# Setup helper - creates local SSH config template
+alias ssh-setup='create_ssh_local_template'
+
+# List configured SSH hosts
+ssh-list-hosts() {
+    echo "Configured SSH hosts:"
+    if [[ -n "${SSH_HOSTS_LOCAL[@]}" ]]; then
+        for entry in "${SSH_HOSTS_LOCAL[@]}"; do
+            local alias=$(echo "$entry" | cut -d: -f1)
+            local hostname=$(echo "$entry" | cut -d: -f2)  
+            local env=$(echo "$entry" | cut -d: -f3)
+            local desc=$(echo "$entry" | cut -d: -f4)
+            
+            case "$env" in
+                development) color="\033[32m" ;;  # Green
+                staging) color="\033[33m" ;;      # Yellow
+                production) color="\033[31m" ;;   # Red
+                *) color="\033[37m" ;;            # White
+            esac
+            
+            printf "${color}%-15s\033[0m %-20s %s\n" "$alias" "($env)" "$desc"
+        done
+    else
+        echo "No hosts configured. Run 'ssh-setup' to get started."
+    fi
+}
+
+# Auto-create template on first load
+create_ssh_local_template >/dev/null 2>&1
+
 # Quick SSH to common hosts (customize these)
 # alias ssh-prod='ssh user@production.server.com'
 # alias ssh-dev='ssh user@dev.server.com'

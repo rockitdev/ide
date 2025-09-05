@@ -12,6 +12,11 @@
 config.local
 *.local
 
+# SSH local configurations
+.zshrc.ssh.local
+ssh_hosts.local
+.ssh/config.local
+
 # API Keys and secrets
 api_keys.txt
 secrets.txt
