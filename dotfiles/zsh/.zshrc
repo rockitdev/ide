@@ -75,6 +75,12 @@ zinit light Aloxaf/fzf-tab
 autoload -Uz compinit && compinit
 zinit cdreplay -q
 
+# Menu selection key bindings (after completion system is loaded)
+bindkey -M menuselect 'h' vi-backward-char 2>/dev/null
+bindkey -M menuselect 'k' vi-up-line-or-history 2>/dev/null
+bindkey -M menuselect 'l' vi-forward-char 2>/dev/null
+bindkey -M menuselect 'j' vi-down-line-or-history 2>/dev/null
+
 # ============================================================================
 # ENVIRONMENT VARIABLES
 # ============================================================================
@@ -226,10 +232,6 @@ zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # KEY BINDINGS
 # ============================================================================
 
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
@@ -466,7 +468,6 @@ alias yb='yarn build'
 alias yd='yarn dev'
 
 # Claude CLI alias
-alias claude='claude-code'
 alias ai='claude-code'
 
 # Quick navigation
@@ -569,7 +570,9 @@ backup() {
 
 # Weather
 weather() {
-  curl "wttr.in/${1:-}"
+  local location="${1:-}"
+  echo "🌤️  Getting weather for ${location:-your location}..."
+  curl -m 10 -s "wttr.in/${location}" || echo "❌ Weather service unavailable"
 }
 
 # Cheat sheet
@@ -656,7 +659,7 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 DEV_SCRIPTS_DIR="$HOME/ide/dotfiles/scripts/dev"
 if [ -d "$DEV_SCRIPTS_DIR" ]; then
   for script in "$DEV_SCRIPTS_DIR"/*.sh; do
-    [ -f "$script" ] && source "$script"
+    [ -f "$script" ] && source "$script" &>/dev/null
   done
 fi
 

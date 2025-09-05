@@ -85,7 +85,7 @@ install_packages() {
     if [[ "$OS" == "macos" ]]; then
         install_homebrew
         # Core packages
-        brew install neovim tmux git ripgrep fzf fd bat eza zsh zoxide thefuck direnv procs btop dog gping
+        brew install neovim tmux git ripgrep fzf fd bat eza zsh zoxide thefuck direnv procs btop doggo gping
         
         # Optional packages based on user selection
         if [ "$INSTALL_NODEJS" = "yes" ]; then

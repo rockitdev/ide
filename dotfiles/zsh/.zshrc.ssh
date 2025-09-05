@@ -40,9 +40,9 @@ add_ssh_keys() {
     fi
 }
 
-# Initialize SSH agent on shell startup
-start_ssh_agent
-add_ssh_keys
+# Initialize SSH agent on shell startup (silent)
+start_ssh_agent >/dev/null 2>&1
+add_ssh_keys >/dev/null 2>&1
 
 # ============================================================================
 # SSH HELPERS
