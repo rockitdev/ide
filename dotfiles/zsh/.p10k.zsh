@@ -37,52 +37,51 @@
   # Zsh >= 5.1 is required.
   [[ $ZSH_VERSION == (5.<1->*|<6->.*) ]] || return
 
-  # Prompt colors.
-  local grey='242'
-  local red='#FF5C57'
-  local yellow='#F3F99D'
-  local blue='#57C7FF'
-  local magenta='#FF6AC1'
-  local cyan='#9AEDFE'
-  local white='#F1F1F0'
+  # Rainbow prompt colors.
+  local red='196'        # Bright red
+  local orange='208'     # Orange  
+  local yellow='226'     # Bright yellow
+  local green='46'       # Bright green
+  local blue='51'        # Bright cyan/blue
+  local indigo='69'      # Indigo/purple
+  local violet='129'     # Violet/magenta
+  local grey='242'       # Grey for subtle elements
+  local white='15'       # Bright white
 
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
-    # context                 # user@host
+    time                      # current time (moved from right)
     dir                       # current directory
     vcs                       # git status
-    # command_execution_time  # previous command duration
+    command_execution_time    # previous command duration (moved from right)
     # =========================[ Line #2 ]=========================
     newline                   # \n
-    # virtualenv              # python virtual environment
+    virtualenv                # python virtual environment (moved from right)
     prompt_char               # prompt symbol
   )
 
   # Right prompt segments.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
-    command_execution_time    # previous command duration
-    virtualenv                # python virtual environment
-    context                   # user@host
-    time                      # current time
+    context                   # user@host (keep context on right)
     # =========================[ Line #2 ]=========================
     newline                   # \n
   )
 
-  # Basic style options that define the overall prompt look.
-  typeset -g POWERLEVEL9K_BACKGROUND=                            # transparent background
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=  # no surrounding whitespace
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate segments with a space
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
-  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=           # no segment icons
+  # Rainbow bar style with solid backgrounds and spacing
+  typeset -g POWERLEVEL9K_BACKGROUND=234                         # dark background
+  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=' '  # padding around segments
+  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR='%F{232}|%f'  # separator between subsegments
+  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=' '     # space between segments
+  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'  # show segment icons
 
   # Add an empty line before each prompt except the first. This doesn't emulate the bug
   # in Pure that makes prompt drift down whenever you use the Alt-C binding from fzf or similar.
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 
-  # Magenta prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$magenta
+  # Green prompt symbol if the last command succeeded.
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$green
   # Red prompt symbol if the last command failed.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
   # Default prompt symbol.
@@ -94,19 +93,25 @@
   # Prompt symbol in overwrite vi mode is the same as in command mode.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_OVERWRITE_STATE=false
 
-  # Grey Python Virtual Environment.
-  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$grey
+  # Yellow Python Virtual Environment with background.
+  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_VIRTUALENV_BACKGROUND=$yellow
   # Don't show Python version.
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=false
   typeset -g POWERLEVEL9K_VIRTUALENV_{LEFT,RIGHT}_DELIMITER=
 
-  # Blue current directory.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$blue
+  # Orange current directory with dark background.
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND=$orange
 
-  # Context format when root: user@host. The first part white, the rest grey.
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$grey}@%m%f"
-  # Context format when not root: user@host. The whole thing grey.
-  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$grey}%n@%m%f"
+  # Context format when root: user@host with red background.
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$white}@%m%f"
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_BACKGROUND=$red
+  # Context format when not root: user@host with green background.
+  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$white}%n@%m%f"
+  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=$white  
+  typeset -g POWERLEVEL9K_CONTEXT_BACKGROUND=$green
   # Don't show context unless root or in SSH.
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
 
@@ -116,11 +121,13 @@
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION=0
   # Duration format: 1d 2h 3m 4s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FORMAT='d h m s'
-  # Yellow previous command duration.
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$yellow
+  # Blue previous command duration with background.
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND=$blue
 
-  # Grey Git prompt. This makes stale prompts indistinguishable from up-to-date ones.
-  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$grey
+  # Violet Git prompt with background.
+  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_VCS_BACKGROUND=$violet
 
   # Disable async loading indicator to make directories that aren't Git repositories
   # indistinguishable from large Git repositories without known state.
@@ -130,8 +137,8 @@
   # asynchronously when Git state changes.
   typeset -g POWERLEVEL9K_VCS_MAX_SYNC_LATENCY_SECONDS=0
 
-  # Cyan ahead/behind arrows.
-  typeset -g POWERLEVEL9K_VCS_{INCOMING,OUTGOING}_CHANGESFORMAT_FOREGROUND=$cyan
+  # Yellow ahead/behind arrows.
+  typeset -g POWERLEVEL9K_VCS_{INCOMING,OUTGOING}_CHANGESFORMAT_FOREGROUND=$yellow
   # Don't show remote branch, current tag or stashes.
   typeset -g POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-aheadbehind)
   # Don't show the branch icon.
@@ -151,8 +158,9 @@
   # Remove space between '⇣' and '⇡' and all trailing spaces.
   typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }'
 
-  # Grey current time.
-  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$grey
+  # Indigo current time with background.
+  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$white
+  typeset -g POWERLEVEL9K_TIME_BACKGROUND=$indigo
   # Format for the current time: 09:51:02. See `man 3 strftime`.
   typeset -g POWERLEVEL9K_TIME_FORMAT='%D{%I:%M:%S %p}'
   # If set to true, time will update when you hit enter. This way prompts for the past
