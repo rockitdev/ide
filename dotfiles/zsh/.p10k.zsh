@@ -37,16 +37,17 @@
   # Zsh >= 5.1 is required.
   [[ $ZSH_VERSION == (5.<1->*|<6->.*) ]] || return
 
-  # Rainbow prompt colors.
-  local red='196'        # Bright red
-  local orange='208'     # Orange  
-  local yellow='226'     # Bright yellow
-  local green='46'       # Bright green
-  local blue='51'        # Bright cyan/blue
-  local indigo='69'      # Indigo/purple
-  local violet='129'     # Violet/magenta
-  local grey='242'       # Grey for subtle elements
-  local white='15'       # Bright white
+  # Cyberpunk neon colors.
+  local neon_pink='198'    # Hot neon pink
+  local neon_cyan='51'     # Electric cyan
+  local neon_green='46'    # Matrix green
+  local neon_purple='129'  # Electric purple
+  local neon_orange='208'  # Neon orange
+  local neon_blue='39'     # Electric blue
+  local neon_yellow='226'  # Neon yellow
+  local dark_bg='232'      # Almost black background
+  local bright_white='15'  # Bright white text
+  local dark_grey='235'    # Dark grey for contrast
 
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -69,8 +70,8 @@
     newline                   # \n
   )
 
-  # Rainbow bar style with solid backgrounds and spacing
-  typeset -g POWERLEVEL9K_BACKGROUND=234                         # dark background
+  # Cyberpunk style with neon backgrounds and dark spacing
+  typeset -g POWERLEVEL9K_BACKGROUND=$dark_bg                    # almost black background
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=' '  # padding around segments
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR='%F{232}|%f'  # separator between subsegments
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=' '     # space between segments
@@ -80,10 +81,10 @@
   # in Pure that makes prompt drift down whenever you use the Alt-C binding from fzf or similar.
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 
-  # Green prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$green
-  # Red prompt symbol if the last command failed.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
+  # Neon cyan prompt symbol if the last command succeeded.
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$neon_cyan
+  # Neon pink prompt symbol if the last command failed.
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$neon_pink
   # Default prompt symbol.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
   # Prompt symbol in command vi mode.
@@ -93,25 +94,25 @@
   # Prompt symbol in overwrite vi mode is the same as in command mode.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_OVERWRITE_STATE=false
 
-  # Yellow Python Virtual Environment with background.
-  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_VIRTUALENV_BACKGROUND=$yellow
+  # Neon green Python Virtual Environment (Matrix style).
+  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$dark_bg
+  typeset -g POWERLEVEL9K_VIRTUALENV_BACKGROUND=$neon_green
   # Don't show Python version.
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=false
   typeset -g POWERLEVEL9K_VIRTUALENV_{LEFT,RIGHT}_DELIMITER=
 
-  # Orange current directory with dark background.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_DIR_BACKGROUND=$orange
+  # Neon orange current directory (cyberpunk path).
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$dark_bg
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND=$neon_orange
 
-  # Context format when root: user@host with red background.
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$white}@%m%f"
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_BACKGROUND=$red
-  # Context format when not root: user@host with green background.
-  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$white}%n@%m%f"
-  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=$white  
-  typeset -g POWERLEVEL9K_CONTEXT_BACKGROUND=$green
+  # Context format when root: user@host with neon pink background (danger).
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$dark_bg}%n%f%F{$dark_bg}@%m%f"
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=$dark_bg
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_BACKGROUND=$neon_pink
+  # Context format when not root: user@host with neon blue background.
+  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$dark_bg}%n@%m%f"
+  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=$dark_bg  
+  typeset -g POWERLEVEL9K_CONTEXT_BACKGROUND=$neon_blue
   # Don't show context unless root or in SSH.
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
 
@@ -121,13 +122,13 @@
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION=0
   # Duration format: 1d 2h 3m 4s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FORMAT='d h m s'
-  # Blue previous command duration with background.
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND=$blue
+  # Neon yellow previous command duration (performance indicator).
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$dark_bg
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND=$neon_yellow
 
-  # Violet Git prompt with background.
-  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_VCS_BACKGROUND=$violet
+  # Neon purple Git prompt (version control system).
+  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$bright_white
+  typeset -g POWERLEVEL9K_VCS_BACKGROUND=$neon_purple
 
   # Disable async loading indicator to make directories that aren't Git repositories
   # indistinguishable from large Git repositories without known state.
@@ -158,9 +159,9 @@
   # Remove space between '⇣' and '⇡' and all trailing spaces.
   typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${${${P9K_CONTENT/⇣* :⇡/⇣⇡}// }//:/ }'
 
-  # Indigo current time with background.
-  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$white
-  typeset -g POWERLEVEL9K_TIME_BACKGROUND=$indigo
+  # Neon cyan current time (electric blue timestamp).
+  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$dark_bg
+  typeset -g POWERLEVEL9K_TIME_BACKGROUND=$neon_cyan
   # Format for the current time: 09:51:02. See `man 3 strftime`.
   typeset -g POWERLEVEL9K_TIME_FORMAT='%D{%I:%M:%S %p}'
   # If set to true, time will update when you hit enter. This way prompts for the past
