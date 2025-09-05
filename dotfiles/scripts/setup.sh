@@ -85,7 +85,7 @@ install_packages() {
     if [[ "$OS" == "macos" ]]; then
         install_homebrew
         # Core packages
-        brew install neovim tmux git ripgrep fzf fd bat eza zsh
+        brew install neovim tmux git ripgrep fzf fd bat eza zsh zoxide thefuck direnv procs btop dog gping
         
         # Optional packages based on user selection
         if [ "$INSTALL_NODEJS" = "yes" ]; then
@@ -114,13 +114,22 @@ install_packages() {
         case "$DISTRO" in
             debian)
                 sudo apt update
-                sudo apt install -y neovim tmux git ripgrep fzf fd-find bat zsh curl wget build-essential python3 python3-pip nodejs npm
+                sudo apt install -y neovim tmux git ripgrep fzf fd-find bat zsh curl wget build-essential python3 python3-pip nodejs npm zoxide direnv
+                # Install eza from cargo
+                cargo install eza
+                # Install modern tools
+                cargo install procs btop
+                # Install thefuck
+                pip3 install thefuck
                 ;;
             arch)
-                sudo pacman -Syu --noconfirm neovim tmux git ripgrep fzf fd bat exa zsh curl wget base-devel python python-pip nodejs npm
+                sudo pacman -Syu --noconfirm neovim tmux git ripgrep fzf fd bat eza zsh curl wget base-devel python python-pip nodejs npm zoxide thefuck direnv procs btop dog gping
                 ;;
             redhat)
-                sudo dnf install -y neovim tmux git ripgrep fzf fd-find bat zsh curl wget gcc gcc-c++ make python3 python3-pip nodejs npm
+                sudo dnf install -y neovim tmux git ripgrep fzf fd-find bat zsh curl wget gcc gcc-c++ make python3 python3-pip nodejs npm zoxide direnv
+                # Install eza and modern tools from cargo
+                cargo install eza procs
+                pip3 install thefuck
                 ;;
         esac
         
@@ -208,6 +217,24 @@ create_symlinks() {
     fi
     ln -sf "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
     print_success "Linked Zsh config"
+    
+    # P10k configuration
+    if [ -e "$HOME/.p10k.zsh" ] || [ -L "$HOME/.p10k.zsh" ]; then
+        print_warning "~/.p10k.zsh already exists. Backing up..."
+        mv "$HOME/.p10k.zsh" "$HOME/.p10k.zsh.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+    ln -sf "$DOTFILES_DIR/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
+    print_success "Linked Powerlevel10k config"
+    
+    # iTerm2 Shell Integration
+    if [[ "$OS" == "macos" ]]; then
+        if [ -e "$HOME/.iterm2_shell_integration.zsh" ] || [ -L "$HOME/.iterm2_shell_integration.zsh" ]; then
+            print_warning "~/.iterm2_shell_integration.zsh already exists. Backing up..."
+            mv "$HOME/.iterm2_shell_integration.zsh" "$HOME/.iterm2_shell_integration.zsh.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+        ln -sf "$DOTFILES_DIR/iterm2/iterm2_shell_integration.zsh" "$HOME/.iterm2_shell_integration.zsh"
+        print_success "Linked iTerm2 shell integration"
+    fi
 }
 
 # Install Zinit (Zsh plugin manager)
@@ -249,7 +276,7 @@ install_python_packages() {
     print_info "Installing Python packages..."
     
     if command -v pip3 &> /dev/null; then
-        pip3 install --user pynvim black isort flake8 pylint
+        pip3 install --user pynvim black isort flake8 pylint thefuck
         print_success "Python packages installed"
     else
         print_warning "pip3 not found. Skipping Python packages installation"
