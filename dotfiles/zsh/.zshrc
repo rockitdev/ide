@@ -641,6 +641,84 @@ export WORKON_HOME=$HOME/.virtualenvs
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 [[ -f /usr/local/bin/virtualenvwrapper.sh ]] && source /usr/local/bin/virtualenvwrapper.sh
 
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# Load development helper scripts
+DEV_SCRIPTS_DIR="$HOME/ide/dotfiles/scripts/dev"
+if [ -d "$DEV_SCRIPTS_DIR" ]; then
+  for script in "$DEV_SCRIPTS_DIR"/*.sh; do
+    [ -f "$script" ] && source "$script"
+  done
+fi
+
+# Tmux session management
+alias tmux='tmux -f ~/.tmux.conf'
+alias ta='tmux attach -t'
+alias ts='tmux new-session -s'
+alias tl='tmux list-sessions'
+alias tk='tmux kill-session -t'
+alias tks='tmux kill-server'
+
+# Development shortcuts
+alias dev='dev_start'
+alias devs='dev_stop'
+alias test='test_all'
+alias check='code_check'
+alias build='build_prod'
+alias release='release'
+alias deploy='deploy'
+
+# Database shortcuts
+alias dbc='db_connect'
+alias dbb='db_backup'
+alias dbm='db_migrate'
+alias dbs='db_seed'
+alias dbr='db_reset'
+
+# API testing shortcuts  
+alias api='api'
+alias gql='graphql'
+alias jwt='jwt_decode'
+alias ws='ws_connect'
+alias bench='api_bench'
+alias mock='mock_server'
+
+# Project management
+alias pnew='project_new'
+alias psw='project_switch'
+alias pclean='project_clean'
+alias pdeps='project_deps'
+alias phooks='project_hooks'
+
+# Monitoring shortcuts
+alias logs='logs'
+alias dlogs='docker_logs'
+alias errors='errors'
+alias health='health_check'
+alias monitor='monitor_dashboard'
+
+# Cloud shortcuts
+alias awsp='aws_profile'
+alias gcpp='gcp_project'
+alias azs='azure_sub'
+alias k='kubectl'
+alias kctx='k8s_context'
+alias kns='k8s_ns'
+alias kex='k8s_exec'
+alias klog='k8s_logs'
+alias kpf='k8s_port_forward'
+alias tf='terraform'
+alias tfw='tf_workspace'
+alias tfp='tf_plan'
+alias tfa='tf_apply'
+
+# Quick navigation to development directories
+alias dev='cd ~/dev'
+alias proj='cd ~/projects'
+alias work='cd ~/work'
+
 # Load local configuration (API keys, etc.)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 

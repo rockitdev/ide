@@ -235,6 +235,24 @@ create_symlinks() {
         ln -sf "$DOTFILES_DIR/iterm2/iterm2_shell_integration.zsh" "$HOME/.iterm2_shell_integration.zsh"
         print_success "Linked iTerm2 shell integration"
     fi
+    
+    # Tmux configuration
+    if [ -e "$HOME/.tmux.conf" ] || [ -L "$HOME/.tmux.conf" ]; then
+        print_warning "~/.tmux.conf already exists. Backing up..."
+        mv "$HOME/.tmux.conf" "$HOME/.tmux.conf.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+    ln -sf "$DOTFILES_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
+    print_success "Linked Tmux config"
+    
+    # Tmux layouts
+    mkdir -p "$HOME/.tmux"
+    ln -sf "$DOTFILES_DIR/tmux/layouts" "$HOME/.tmux/"
+    print_success "Linked Tmux layouts"
+    
+    # Development scripts - make them executable
+    chmod +x "$DOTFILES_DIR/scripts/dev"/*.sh 2>/dev/null || true
+    chmod +x "$DOTFILES_DIR/scripts"/*.sh 2>/dev/null || true
+    print_success "Development scripts configured"
 }
 
 # Install Zinit (Zsh plugin manager)
@@ -312,6 +330,30 @@ setup_neovim() {
     print_success "Neovim setup complete"
 }
 
+# Setup Tmux
+setup_tmux() {
+    print_info "Setting up Tmux..."
+    
+    # Install Tmux Plugin Manager (TPM)
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        print_info "Installing Tmux Plugin Manager..."
+        git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+        print_success "TPM installed"
+    else
+        print_info "TPM already installed"
+    fi
+    
+    # Install tmux plugins
+    if command -v tmux &> /dev/null; then
+        tmux new-session -d -s temp 2>/dev/null || true
+        tmux run-shell "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh"
+        tmux kill-session -t temp 2>/dev/null || true
+        print_success "Tmux plugins installed"
+    fi
+    
+    print_success "Tmux setup complete"
+}
+
 # Change default shell to Zsh
 change_shell() {
     if [ "$CHANGE_SHELL" != "yes" ]; then
@@ -344,6 +386,7 @@ main() {
     install_python_packages
     install_claude_cli
     setup_neovim
+    setup_tmux
     change_shell
     
     echo ""

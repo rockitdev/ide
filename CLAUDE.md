@@ -249,14 +249,46 @@ Additional servers can be installed via Mason (`:Mason` in Neovim).
 29. **Triggers & badges** - Visual notifications for errors/warnings/success
 30. **Split pane workflows** - Optimized hotkeys and layouts
 
+## Full-Stack Developer Features
+
+### Development Tools
+- **Tmux Configuration**: Advanced session management with IDE-like layouts
+- **Database Tools**: Connection manager, backup, migration helpers for PostgreSQL, MySQL, MongoDB, Redis
+- **API Testing**: HTTPie integration, GraphQL support, JWT decoder, WebSocket client
+- **Project Scaffolding**: Templates for React, Next.js, Node.js with one-command setup
+- **Workflow Automation**: Dev environment start/stop, build, test, deploy commands
+- **Monitoring**: Log aggregation, process monitoring, network debugging, performance profiling
+- **Cloud Integration**: AWS, GCP, Azure CLI helpers, Kubernetes management, Terraform workflows
+
+### Development Scripts (`dotfiles/scripts/dev/`)
+- **db-tools.sh**: Database connections, backups, migrations, seeding
+- **api-tools.sh**: API testing, mocking, benchmarking, documentation
+- **project-tools.sh**: Project creation, switching, dependency management
+- **workflow.sh**: Development workflows, CI/CD, releases
+- **monitoring.sh**: System monitoring, debugging, profiling
+- **cloud-tools.sh**: Cloud provider management, K8s, Terraform
+
+### Quick Commands
+- `dev` - Start development environment with auto-detection
+- `test` - Run all tests across languages
+- `deploy` - Deploy to staging/production
+- `dbc` - Connect to database
+- `api` - Make API requests
+- `pnew` - Create new project from template
+- `psw` - Switch projects with tmux
+- `health` - System health check
+- `k` - kubectl shortcut
+
 ## Project Goals
 
 1. **Zero-to-IDE**: One command to full development environment
 2. **Beautiful**: Transparent, modern aesthetics with 30+ terminal enhancements
 3. **Fast**: Optimized startup and runtime performance
 4. **AI-Native**: Integrated AI assistance for modern development
-5. **Portable**: Works across macOS and Linux distributions
-6. **Maintainable**: Clear structure and documentation
+5. **Full-Stack Ready**: Complete tooling for modern web development
+6. **Cloud-Native**: Built-in support for AWS, GCP, Azure, Kubernetes
+7. **Portable**: Works across macOS and Linux distributions
+8. **Maintainable**: Clear structure and documentation
 
 ## Repository Information
 
