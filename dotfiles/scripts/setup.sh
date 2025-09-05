@@ -226,6 +226,14 @@ create_symlinks() {
     ln -sf "$DOTFILES_DIR/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
     print_success "Linked Powerlevel10k config"
     
+    # SSH configuration
+    if [ -e "$HOME/.zshrc.ssh" ] || [ -L "$HOME/.zshrc.ssh" ]; then
+        print_warning "~/.zshrc.ssh already exists. Backing up..."
+        mv "$HOME/.zshrc.ssh" "$HOME/.zshrc.ssh.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+    ln -sf "$DOTFILES_DIR/zsh/.zshrc.ssh" "$HOME/.zshrc.ssh"
+    print_success "Linked SSH configuration"
+    
     # iTerm2 Shell Integration
     if [[ "$OS" == "macos" ]]; then
         if [ -e "$HOME/.iterm2_shell_integration.zsh" ] || [ -L "$HOME/.iterm2_shell_integration.zsh" ]; then

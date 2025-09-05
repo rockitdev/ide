@@ -8,6 +8,13 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # ============================================================================
+# COMPATIBILITY SETTINGS
+# ============================================================================
+
+# Disable magic functions (fixes URL pasting issues)
+DISABLE_MAGIC_FUNCTIONS="true"
+
+# ============================================================================
 # ZINIT PLUGIN MANAGER
 # ============================================================================
 
@@ -718,6 +725,13 @@ alias tfa='tf_apply'
 alias dev='cd ~/dev'
 alias proj='cd ~/projects'
 alias work='cd ~/work'
+
+# ============================================================================
+# SSH CONFIGURATION
+# ============================================================================
+
+# Load SSH agent configuration
+[[ -f ~/.zshrc.ssh ]] && source ~/.zshrc.ssh
 
 # Load local configuration (API keys, etc.)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
