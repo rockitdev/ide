@@ -232,6 +232,8 @@ zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # KEY BINDINGS
 # ============================================================================
 
+# Multiline editing - Shift+Enter for new line
+bindkey '^[[13;2u' self-insert-unmeta
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
