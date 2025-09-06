@@ -71,8 +71,8 @@ zinit light hcgraf/zsh-sudo
 # FZF tab completion
 zinit light Aloxaf/fzf-tab
 
-# Load completions
-autoload -Uz compinit && compinit
+# Load completions - skip security check
+autoload -Uz compinit && compinit -u
 zinit cdreplay -q
 
 # Menu selection key bindings (after completion system is loaded)
@@ -749,3 +749,5 @@ alias work='cd ~/work'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 ### End of Zinit's installer chunk
+export ZSH_DISABLE_COMPFIX="true"
+ZSH_DISABLE_COMPFIX=true
