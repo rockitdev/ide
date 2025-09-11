@@ -178,8 +178,8 @@ setopt EXTENDED_GLOB
 unsetopt MENU_COMPLETE
 unsetopt FLOW_CONTROL
 
-setopt CORRECT
-setopt CORRECT_ALL
+unsetopt CORRECT
+unsetopt CORRECT_ALL
 
 setopt NOTIFY
 setopt LONG_LIST_JOBS
