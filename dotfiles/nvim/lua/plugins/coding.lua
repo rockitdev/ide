@@ -162,23 +162,43 @@ return {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      "mason.nvim",
+      "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "hrsh7th/cmp-nvim-lsp",
     },
+  },
+
+  -- Mason
+  {
+    "williamboman/mason.nvim",
+    lazy = false,
+    priority = 1000,
+    cmd = "Mason",
+    keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
+    dependencies = {
+      "williamboman/mason-lspconfig.nvim",
+      "neovim/nvim-lspconfig",
+      "hrsh7th/cmp-nvim-lsp",
+    },
     config = function()
+      require("mason").setup({
+        ensure_installed = {
+          "stylua", "shfmt", "prettier", "black", "isort",
+          "eslint-lsp", "shellcheck", "hadolint", "yamllint",
+        },
+      })
+
+      -- LSP configuration
       local lspconfig = require("lspconfig")
-      local mason_lspconfig = require("mason-lspconfig")
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
-      
       local capabilities = cmp_nvim_lsp.default_capabilities()
-      
+
       local on_attach = function(client, bufnr)
         local function buf_set_keymap(...)
           vim.api.nvim_buf_set_keymap(bufnr, ...)
         end
         local opts = { noremap = true, silent = true }
-        
+
         buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
         buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
         buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
@@ -197,55 +217,42 @@ return {
         buf_set_keymap("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
         buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
       end
-      
+
+      local mason_lspconfig = require("mason-lspconfig")
       mason_lspconfig.setup({
         ensure_installed = {
-          "lua_ls", "tsserver", "pyright", "rust_analyzer",
-          "gopls", "jsonls", "html", "cssls", "bashls",
+          "lua_ls", "ts_ls", "pyright",
+          "jsonls", "html", "cssls", "bashls",
         },
-      })
-      
-      mason_lspconfig.setup_handlers({
-        function(server_name)
-          lspconfig[server_name].setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
-          })
-        end,
-        ["lua_ls"] = function()
-          lspconfig.lua_ls.setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = {
-              Lua = {
-                diagnostics = {
-                  globals = { "vim" },
-                },
-                workspace = {
-                  library = {
-                    [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-                    [vim.fn.stdpath("config") .. "/lua"] = true,
+        handlers = {
+          function(server_name)
+            lspconfig[server_name].setup({
+              capabilities = capabilities,
+              on_attach = on_attach,
+            })
+          end,
+          ["lua_ls"] = function()
+            lspconfig.lua_ls.setup({
+              capabilities = capabilities,
+              on_attach = on_attach,
+              settings = {
+                Lua = {
+                  diagnostics = {
+                    globals = { "vim" },
+                  },
+                  workspace = {
+                    library = {
+                      [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                      [vim.fn.stdpath("config") .. "/lua"] = true,
+                    },
                   },
                 },
               },
-            },
-          })
-        end,
+            })
+          end,
+        },
       })
     end,
-  },
-
-  -- Mason
-  {
-    "williamboman/mason.nvim",
-    cmd = "Mason",
-    keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
-    opts = {
-      ensure_installed = {
-        "stylua", "shfmt", "prettier", "black", "isort",
-        "eslint-lsp", "shellcheck", "hadolint", "yamllint",
-      },
-    },
   },
 
   -- Autocompletion
